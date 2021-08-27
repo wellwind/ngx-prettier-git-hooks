@@ -1,15 +1,29 @@
 {
   "name": "ngx-prettier-git-hooks",
   "version": "0.0.0",
-  "description": "Schematics add prettier git commit hook into Angular project quickly.",
+  "description": "Add prettier git commit hooks into Angular project quickly.",
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "test": "npm run build && jasmine src/**/*_spec.js"
   },
   "keywords": [
-    "schematics"
+    "schematics",
+    "angular",
+    "prettier",
+    "husky"
   ],
-  "author": "",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/wellwind/ngx-prettier-git-hooks.git"
+  },
+  "author": {
+    "name" : "Mike Huang",
+    "email" : "wellwind@gmail.com",
+    "url" : "https://wellwind.idv.tw/blog"
+  },
+  "bugs": {
+    "url": "https://github.com/wellwind/ngx-prettier-git-hooks/issues"
+  },
   "license": "MIT",
   "schematics": "./src/collection.json",
   "dependencies": {
