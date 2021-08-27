@@ -1,0 +1,8 @@
+{
+  "$schema": "../node_modules/@angular-devkit/schematics/collection-schema.json",
+  "schematics": {  "ngx-prettier-git-hooks": {
+      "description": "A blank schematic.",
+      "factory": "./ngx-prettier-git-hooks/index#ngxPrettierGitHooks"
+    }
+  }
+}
