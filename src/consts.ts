@@ -1,0 +1,1 @@
+export const afterPrepareCommands = 'npx husky set .husky/pre-commit "npx pretty-quick --staged" && ng g ngx-prettier-git-hooks:after-ng-add';

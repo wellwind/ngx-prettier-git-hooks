@@ -1,8 +1,13 @@
 {
   "$schema": "../node_modules/@angular-devkit/schematics/collection-schema.json",
-  "schematics": {  "ngx-prettier-git-hooks": {
-      "description": "A blank schematic.",
-      "factory": "./ngx-prettier-git-hooks/index#ngxPrettierGitHooks"
+  "schematics": { 
+    "ng-add": {
+      "description": "Add schematics to project",
+      "factory": "./ng-add/index#ngAdd"
+    },
+    "after-ng-add": {
+      "description": "Clean up tasks after ng add",
+      "factory": "./after-ng-add/index#afterNgAdd"
     }
   }
 }
