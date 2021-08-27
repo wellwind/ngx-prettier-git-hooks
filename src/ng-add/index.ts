@@ -1,6 +1,13 @@
-import { chain, Rule, SchematicContext, Tree } from '@angular-devkit/schematics';
+import { chain, Rule , SchematicContext, Tree } from '@angular-devkit/schematics';
 import { NodePackageInstallTask } from '@angular-devkit/schematics/tasks';
 import { afterPrepareCommands } from '../consts';
+import { prettierignoreContent } from './templates/prettierignore';
+
+function createFileIfNotExist(tree: Tree, fileName: string, content: string) {
+  if (!tree.exists(fileName)) {
+    tree.create(fileName, content);
+  }
+}
 
 function addPackages(): Rule {
   return (tree: Tree) => {
@@ -34,6 +41,122 @@ function setPrepareScript(): Rule {
   };
 }
 
+function addPrettierIgnore(): Rule {
+  return (tree: Tree) => {
+    const fileName = '.prettierignore';
+    let content = '';
+
+    if (tree.exists(fileName)) {
+      content = tree.read(fileName)!.toString('UTF-8') + '\n' + prettierignoreContent;
+      tree.overwrite(fileName, content);
+    } else {
+      tree.create(fileName, prettierignoreContent);
+    }
+
+    return tree;
+  };
+}
+
+function addPrettierRcJson(): Rule {
+  return (tree: Tree) => {
+    const fileName = '.prettierrc.json';
+    createFileIfNotExist(tree, fileName, '{}');
+
+    const content = JSON.parse(tree.read(fileName)!.toString('UTF-8'));
+
+    content['tabWidth'] = 2;
+    content['useTabs'] = false;
+    content['printWidth'] = 100;
+    content['bracketSpacing'] = true;
+    content['singleQuote'] = true;
+    content['trailingComma'] = 'es5';
+    content['semi'] = true;
+
+    if (!content['overrides']) {
+      content['overrides'] = [];
+    }
+
+    const overridesSettings = [
+      {
+        files: ['*.json', '.babelrc'],
+        options: {
+          parser: 'json-stringify',
+        },
+      },
+      {
+        files: ['*.jsonc', 'tsconfig*.json'],
+        options: {
+          parser: 'json',
+        },
+      },
+      {
+        files: ['*.js', '*.cjs', '*.mjs'],
+        options: {
+          parser: 'babel',
+        },
+      },
+      {
+        files: ['*.ts'],
+        options: {
+          parser: 'typescript',
+        },
+      },
+    ];
+
+    overridesSettings.forEach((item) => {
+      content['overrides'].push(item);
+    });
+
+    tree.overwrite(fileName, JSON.stringify(content, null, 2));
+
+    return tree;
+  };
+}
+
+function addVSCodeSettingsJson(): Rule {
+  return (tree: Tree) => {
+    const fileName = '.vscode/settings.json';
+    createFileIfNotExist(tree, fileName, '{}');
+
+    const content = JSON.parse(tree.read(fileName)!.toString('UTF-8'));
+    content['[typescript]'] = { 'editor.defaultFormatter': 'esbenp.prettier-vscode' };
+    content['[javascript]'] = { 'editor.defaultFormatter': 'esbenp.prettier-vscode' };
+    content['[html]'] = { 'editor.defaultFormatter': 'esbenp.prettier-vscode' };
+    content['[json]'] = { 'editor.defaultFormatter': 'esbenp.prettier-vscode' };
+    content['[jsonc]'] = { 'editor.defaultFormatter': 'esbenp.prettier-vscode' };
+    content['editor.formatOnSave'] = true;
+
+    tree.overwrite(fileName, JSON.stringify(content, null, 2));
+
+    return tree;
+  };
+}
+
+function addVSCodeExtensionsJson(): Rule {
+  return (tree: Tree) => {
+    const fileName = '.vscode/extensions.json';
+    createFileIfNotExist(tree, fileName, '{}');
+
+    const content = JSON.parse(tree.read(fileName)!.toString('UTF-8'));
+    const recommendationsKey = 'recommendations';
+    if (!content[recommendationsKey]) {
+      content[recommendationsKey] = [];
+    }
+
+    const recommendations = ['EditorConfig.EditorConfig', 'esbenp.prettier-vscode'];
+    recommendations.forEach((item) => {
+      const found = (content[recommendationsKey] as string[]).find((recommend) => recommend === item);
+      if (!found) {
+        content[recommendationsKey].push(item);
+      }
+    });
+
+    tree.overwrite(fileName, JSON.stringify(content, null, 2));
+
+    return tree;
+  };
+}
+
 function installPackages(): Rule {
   return (tree: Tree, context: SchematicContext) => {
     context.addTask(new NodePackageInstallTask());
@@ -42,5 +165,13 @@ function installPackages(): Rule {
 }
 
 export function ngAdd(_options: any): Rule {
-  return chain([addPackages(), setPrepareScript(), installPackages()]);
+  return chain([
+    addPackages(),
+    setPrepareScript(),
+    addPrettierIgnore(),
+    addPrettierRcJson(),
+    addVSCodeSettingsJson(),
+    addVSCodeExtensionsJson(),
+    installPackages()
+  ]);
 }
