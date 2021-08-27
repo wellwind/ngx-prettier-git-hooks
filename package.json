@@ -1,6 +1,6 @@
 {
   "name": "ngx-prettier-git-hooks",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Add prettier git commit hooks into Angular project quickly.",
   "scripts": {
     "build": "tsc -p tsconfig.json",
@@ -17,9 +17,9 @@
     "url": "https://github.com/wellwind/ngx-prettier-git-hooks.git"
   },
   "author": {
-    "name" : "Mike Huang",
-    "email" : "wellwind@gmail.com",
-    "url" : "https://wellwind.idv.tw/blog"
+    "name": "Mike Huang",
+    "email": "wellwind@gmail.com",
+    "url": "https://wellwind.idv.tw/blog"
   },
   "bugs": {
     "url": "https://github.com/wellwind/ngx-prettier-git-hooks/issues"
